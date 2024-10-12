@@ -1,13 +1,13 @@
-import { clip, injectMask } from '../tileclip';
+import { clip, injectMask, removeMask } from '../tileclip';
 import { getTile } from '../tileget';
 
 export const initialize = function () {
 };
 
 export const onmessage = function (message, postResponse) {
-    const data = message.data;
-    const { _type } = data;
-    if (_type === 'getTile') {
+    const data = message.data || {};
+    const type = data._type;
+    if (type === 'getTile') {
         const { url } = data;
         getTile(url, data).then(image => {
             postResponse(null, image);
@@ -16,7 +16,7 @@ export const onmessage = function (message, postResponse) {
         });
         return;
     }
-    if (_type === 'clipTile') {
+    if (type === 'clipTile') {
         const image = clip(data);
         if (image instanceof Error) {
             postResponse(image);
@@ -24,12 +24,16 @@ export const onmessage = function (message, postResponse) {
         }
         postResponse(null, image);
     }
-    if (_type === 'injectMask') {
+    if (type === 'injectMask') {
         const geojson = injectMask(data.maskId, data.geojsonFeature);
         if (geojson instanceof Error) {
             postResponse(geojson);
             return;
         }
         postResponse(null, geojson);
+    }
+    if (type === 'removeMask') {
+        removeMask(data.maskId);
+        postResponse(null);
     }
 };

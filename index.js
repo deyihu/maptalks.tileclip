@@ -57,6 +57,25 @@ class TileActor extends worker.Actor {
             });
         });
     }
+
+    removeMask(maskId) {
+        return new Promise((resolve, reject) => {
+            if (!maskId) {
+                reject(new Error('maskId is null'));
+                return;
+            }
+            this.broadcast({
+                maskId,
+                _type: 'removeMask'
+            }, [], (error, data) => {
+                if (error) {
+                    reject(error);
+                    return;
+                }
+                resolve();
+            });
+        });
+    }
 }
 
 let actor;
