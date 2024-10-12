@@ -312,7 +312,7 @@ const workerCode = ` function (exports) { 'use strict';
       if (!feature) {
           return false;
       }
-      const geometry = feature.geometry || feature;
+      const geometry = feature.geometry || {};
       const type = geometry.type;
       return type === 'Polygon' || type === 'MultiPolygon';
   }
@@ -323,7 +323,7 @@ const workerCode = ` function (exports) { 'use strict';
 
   function injectMask(maskId, geojson) {
       if (!isPolygon(geojson)) {
-          return new Error('geojson is not Polygon');
+          return new Error('geojson.feature is not Polygon');
       }
       if (GeoJSONCache[maskId]) {
           return new Error('the' + maskId + ' geojson Already exists');
@@ -331,6 +331,10 @@ const workerCode = ` function (exports) { 'use strict';
       GeoJSONCache[maskId] = geojson;
       checkGeoJSONFeatureBBOX(geojson);
       return geojson;
+  }
+
+  function removeMask(maskId) {
+      delete GeoJSONCache[maskId];
   }
 
   function checkGeoJSONFeatureBBOX(feature) {
@@ -376,7 +380,7 @@ const workerCode = ` function (exports) { 'use strict';
       return [px, py];
   }
 
-  function toPixels(projection, tileBBOX, tileSize, coordinates) {
+  function transformPixels(projection, tileBBOX, tileSize, coordinates) {
       const [minx, miny, maxx, maxy] = tileBBOX;
       if (is3857(projection)) {
           const [mminx, mminy] = lnglat2Mercator([minx, miny]);
@@ -437,7 +441,7 @@ const workerCode = ` function (exports) { 'use strict';
       let newCoordinates;
       if (bboxInBBOX(bbox$1, tileBBOX)) {
           newCoordinates = transformCoordinates(projection, polygons);
-          const pixels = toPixels(projection, tileBBOX, tileSize, newCoordinates);
+          const pixels = transformPixels(projection, tileBBOX, tileSize, newCoordinates);
           const image = imageClip(canvas, pixels, tile);
           return image;
       }
@@ -475,7 +479,7 @@ const workerCode = ` function (exports) { 'use strict';
       }
 
       newCoordinates = transformCoordinates(projection, clipRings);
-      const pixels = toPixels(projection, tileBBOX, tileSize, newCoordinates);
+      const pixels = transformPixels(projection, tileBBOX, tileSize, newCoordinates);
       const image = imageClip(canvas, pixels, tile);
       return image;
   }
@@ -500,9 +504,9 @@ const workerCode = ` function (exports) { 'use strict';
   };
 
   const onmessage = function (message, postResponse) {
-      const data = message.data;
-      const { _type } = data;
-      if (_type === 'getTile') {
+      const data = message.data || {};
+      const type = data._type;
+      if (type === 'getTile') {
           const { url } = data;
           getTile(url, data).then(image => {
               postResponse(null, image);
@@ -511,7 +515,7 @@ const workerCode = ` function (exports) { 'use strict';
           });
           return;
       }
-      if (_type === 'clipTile') {
+      if (type === 'clipTile') {
           const image = clip(data);
           if (image instanceof Error) {
               postResponse(image);
@@ -519,13 +523,17 @@ const workerCode = ` function (exports) { 'use strict';
           }
           postResponse(null, image);
       }
-      if (_type === 'injectMask') {
+      if (type === 'injectMask') {
           const geojson = injectMask(data.maskId, data.geojsonFeature);
           if (geojson instanceof Error) {
               postResponse(geojson);
               return;
           }
           postResponse(null, geojson);
+      }
+      if (type === 'removeMask') {
+          removeMask(data.maskId);
+          postResponse(null);
       }
   };
 
