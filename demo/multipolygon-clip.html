@@ -17,7 +17,7 @@
     }
 </style>
 <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/maptalks/dist/maptalks.min.css' />
-<script type='text/javascript' src='https://cdn.jsdelivr.net/npm/maptalks/dist/maptalks.min.js'></script>
+<script type='text/javascript' src='https://cdn.jsdelivr.net/npm/maptalks-gl/dist/maptalks-gl.js'></script>
 <script type='text/javascript' src='../dist/maptalks.tileclip.js'></script>
 
 <body>
@@ -39,19 +39,16 @@
             //   url(String): the url of the tile
             e.renderer.loadTileBitmap = function (url, tile, callback) {
                 tileActor.getTile({ url: maptalks.Util.getAbsoluteURL(url) }).then(imagebitmap => {
-
                     tileActor.clipTile({
                         tile: imagebitmap,
                         tileBBOX: baseLayer._getTileBBox(tile),
                         projection: baseLayer.getProjection().code,
                         tileSize: baseLayer.getTileSize().width,
                         maskId,
-                        xyz: [tile.x, tile.y, tile.z]
                     }).then(image => {
-
                         callback(image);
-
                     }).catch(error => {
+                        //do some things
                         console.error(error);
                     })
                 }).catch(error => {
@@ -65,25 +62,37 @@
             "center": [121.65586045, 31.12453538], "zoom": 9.064897200334302, "pitch": 0, "bearing": 0,
         });
 
+        const sceneConfig = {
+            postProcess: {
+                enable: true,
+                antialias: { enable: true }
+            }
+        };
+        const groupLayer = new maptalks.GroupGLLayer('group', [], { sceneConfig });
+        groupLayer.addTo(map);
+
         const layer = new maptalks.VectorLayer('layer').addTo(map);
 
-        
         const symbol = {
             polygonOpacity: 0,
             lineColor: 'red'
         }
 
-        fetch('./上海市.json').then(res => res.json()).then(geojson => {
-             const polygons = maptalks.GeoJSON.toGeometry(geojson, (geo => {
+        fetch('./崇明区.json').then(res => res.json()).then(geojson => {
+            const polygons = maptalks.GeoJSON.toGeometry(geojson, (geo => {
                 geo.setSymbol(symbol);
             }));
             layer.addGeometry(polygons);
+            map.setView({
+               "center":[121.57557917,31.55200041],"zoom":10.76644300415406,"pitch":0,"bearing":0
+            })
             tileActor.injectMask(maskId, geojson.features[0]).then(data => {
-                baseLayer.addTo(map);
+                baseLayer.addTo(groupLayer);
             }).catch(error => {
                 console.error(error);
             })
         })
+
 
 
     </script>
