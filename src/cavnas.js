@@ -10,16 +10,21 @@ export function getCanvas(tileSize = 256) {
     return canvas;
 }
 
+function clearCanvas(ctx) {
+    const canvas = ctx.canvas;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+}
+
 export function getCanvasContext(canvas) {
     const ctx = canvas.getContext('2d');
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    clearCanvas(ctx);
     return ctx;
 }
 
 export function getBlankTile() {
     const canvas = getCanvas();
     const ctx = getCanvasContext(canvas);
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    clearCanvas(ctx);
     // ctx.fillText('404', 100, 100);
     // ctx.rect(0, 0, canvas.width, canvas.height);
     // ctx.stroke();
@@ -28,7 +33,7 @@ export function getBlankTile() {
 
 export function imageClip(canvas, polygons, image) {
     const ctx = getCanvasContext(canvas);
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    clearCanvas(ctx);
     ctx.save();
 
     const drawPolygon = (rings) => {

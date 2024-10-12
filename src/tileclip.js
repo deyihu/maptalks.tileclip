@@ -9,7 +9,7 @@ export function isPolygon(feature) {
     if (!feature) {
         return false;
     }
-    const geometry = feature.geometry || feature;
+    const geometry = feature.geometry || {};
     const type = geometry.type;
     return type === 'Polygon' || type === 'MultiPolygon';
 }
@@ -20,7 +20,7 @@ export function is3857(projection) {
 
 export function injectMask(maskId, geojson) {
     if (!isPolygon(geojson)) {
-        return new Error('geojson is not Polygon');
+        return new Error('geojson.feature is not Polygon');
     }
     if (GeoJSONCache[maskId]) {
         return new Error('the' + maskId + ' geojson Already exists');
@@ -28,6 +28,10 @@ export function injectMask(maskId, geojson) {
     GeoJSONCache[maskId] = geojson;
     checkGeoJSONFeatureBBOX(geojson);
     return geojson;
+}
+
+export function removeMask(maskId) {
+    delete GeoJSONCache[maskId];
 }
 
 function checkGeoJSONFeatureBBOX(feature) {
@@ -73,7 +77,7 @@ function coordinate2Pixel(tileBBOX, tileSize, coordinate) {
     return [px, py];
 }
 
-function toPixels(projection, tileBBOX, tileSize, coordinates) {
+function transformPixels(projection, tileBBOX, tileSize, coordinates) {
     const [minx, miny, maxx, maxy] = tileBBOX;
     if (is3857(projection)) {
         const [mminx, mminy] = lnglat2Mercator([minx, miny]);
@@ -125,15 +129,16 @@ export function clip(options = {}) {
     if (!bboxIntersect(bbox, tileBBOX)) {
         return getBlankTile();
     }
-    let { coordinates, type } = polygon.geometry;
+    const { coordinates, type } = polygon.geometry;
+    let polygons = coordinates;
     if (type === 'Polygon') {
-        coordinates = [coordinates];
+        polygons = [polygons];
     }
 
     let newCoordinates;
     if (bboxInBBOX(bbox, tileBBOX)) {
-        newCoordinates = transformCoordinates(projection, coordinates);
-        const pixels = toPixels(projection, tileBBOX, tileSize, newCoordinates);
+        newCoordinates = transformCoordinates(projection, polygons);
+        const pixels = transformPixels(projection, tileBBOX, tileSize, newCoordinates);
         const image = imageClip(canvas, pixels, tile);
         return image;
     }
@@ -156,12 +161,14 @@ export function clip(options = {}) {
     };
 
     const clipRings = [];
-    for (let i = 0, len = coordinates.length; i < len; i++) {
-        const rings = coordinates[i];
-        const outRing = rings[0];
-        const result = lineclip.polygon(outRing, tileBBOX);
-        if (validateClipRing(result)) {
-            clipRings.push([result]);
+    for (let i = 0, len = polygons.length; i < len; i++) {
+        const polygon = polygons[i];
+        for (let j = 0, len1 = polygon.length; j < len1; j++) {
+            const ring = polygon[j];
+            const result = lineclip.polygon(ring, tileBBOX);
+            if (validateClipRing(result)) {
+                clipRings.push([result]);
+            }
         }
     }
     if (clipRings.length === 0) {
@@ -169,7 +176,7 @@ export function clip(options = {}) {
     }
 
     newCoordinates = transformCoordinates(projection, clipRings);
-    const pixels = toPixels(projection, tileBBOX, tileSize, newCoordinates);
+    const pixels = transformPixels(projection, tileBBOX, tileSize, newCoordinates);
     const image = imageClip(canvas, pixels, tile);
     return image;
 }

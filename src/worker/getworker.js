@@ -229,16 +229,21 @@ const workerCode = ` function (exports) { 'use strict';
       return canvas;
   }
 
+  function clearCanvas(ctx) {
+      const canvas = ctx.canvas;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+  }
+
   function getCanvasContext(canvas) {
       const ctx = canvas.getContext('2d');
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      clearCanvas(ctx);
       return ctx;
   }
 
   function getBlankTile() {
       const canvas = getCanvas();
       const ctx = getCanvasContext(canvas);
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      clearCanvas(ctx);
       // ctx.fillText('404', 100, 100);
       // ctx.rect(0, 0, canvas.width, canvas.height);
       // ctx.stroke();
@@ -247,7 +252,7 @@ const workerCode = ` function (exports) { 'use strict';
 
   function imageClip(canvas, polygons, image) {
       const ctx = getCanvasContext(canvas);
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      clearCanvas(ctx);
       ctx.save();
 
       const drawPolygon = (rings) => {
@@ -394,7 +399,7 @@ const workerCode = ` function (exports) { 'use strict';
   }
 
   function clip(options = {}) {
-      const { tile, tileBBOX, projection, tileSize, maskId, xyz } = options;
+      const { tile, tileBBOX, projection, tileSize, maskId } = options;
       if (!tile) {
           return new Error('tile is null.It should be a ImageBitmap');
       }
@@ -423,14 +428,15 @@ const workerCode = ` function (exports) { 'use strict';
       if (!bboxIntersect(bbox$1, tileBBOX)) {
           return getBlankTile();
       }
-      let { coordinates, type } = polygon.geometry;
+      const { coordinates, type } = polygon.geometry;
+      let polygons = coordinates;
       if (type === 'Polygon') {
-          coordinates = [coordinates];
+          polygons = [polygons];
       }
 
       let newCoordinates;
       if (bboxInBBOX(bbox$1, tileBBOX)) {
-          newCoordinates = transformCoordinates(projection, coordinates);
+          newCoordinates = transformCoordinates(projection, polygons);
           const pixels = toPixels(projection, tileBBOX, tileSize, newCoordinates);
           const image = imageClip(canvas, pixels, tile);
           return image;
@@ -454,12 +460,14 @@ const workerCode = ` function (exports) { 'use strict';
       };
 
       const clipRings = [];
-      for (let i = 0, len = coordinates.length; i < len; i++) {
-          const rings = coordinates[i];
-          const outRing = rings[0];
-          const result = lineclip_1.polygon(outRing, tileBBOX);
-          if (validateClipRing(result)) {
-              clipRings.push([result]);
+      for (let i = 0, len = polygons.length; i < len; i++) {
+          const polygon = polygons[i];
+          for (let j = 0, len1 = polygon.length; j < len1; j++) {
+              const ring = polygon[j];
+              const result = lineclip_1.polygon(ring, tileBBOX);
+              if (validateClipRing(result)) {
+                  clipRings.push([result]);
+              }
           }
       }
       if (clipRings.length === 0) {

@@ -67,7 +67,7 @@
 
         const layer = new maptalks.VectorLayer('layer').addTo(map);
 
-        fetch('./上海市.json').then(res => res.json()).then(geojson => {
+        fetch('./崇明区-holes.geojson').then(res => res.json()).then(geojson => {
             const polygons = maptalks.GeoJSON.toGeometry(geojson);
             // layer.addGeometry(polygons);
             tileActor.injectMask(maskId, geojson.features[0]).then(data => {
