@@ -1,14 +1,29 @@
 {
   "name": "maptalks.tileclip",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "",
-  "main": "index.js",
+  "main": "./dist/maptalks.tileclip.js",
+  "module": "index.js",
   "scripts": {
+    "lint": "eslint src/**/*.js",
     "worker": "rollup --environment BUILD:production -c rollup.worker.config.js && node build.js",
     "build": "npm run worker && rollup --environment BUILD:production -c rollup.config.js"
   },
-  "author": "",
-  "license": "ISC",
+  "files": [
+    "dist",
+    "index.js",
+    "src"
+  ],
+  "author": "deyihu",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/deyihu/maptalks.tileclip.git"
+  },
+  "bugs": {
+    "url": "https://github.com/deyihu/maptalks.tileclip/issues"
+  },
+  "homepage": "https://github.com/deyihu/maptalks.tileclip#readme",
   "dependencies": {
     "@maptalks/geojson-bbox": "^1.0.5",
     "lineclip": "^1.1.5"
