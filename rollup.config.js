@@ -32,7 +32,7 @@ function getEntry() {
 
 const bundles = [
     {
-        input: 'src/worker/index',
+        input: 'src/worker',
         plugins: product ? plugins.concat([terser(), mtkWorkerPlugin()]) : plugins.concat([mtkWorkerPlugin()]),
         output: {
             format: 'amd',

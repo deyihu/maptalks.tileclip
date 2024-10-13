@@ -1,5 +1,5 @@
-import { clip, injectMask, removeMask } from '../tileclip';
-import { getTile } from '../tileget';
+import { clip, injectMask, removeMask } from './tileclip';
+import { getTile } from './tileget';
 
 export const initialize = function () {
 };
