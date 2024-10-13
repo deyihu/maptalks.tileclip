@@ -17,6 +17,7 @@
 * [EPSG:4326](https://deyihu.github.io/maptalks.tileclip/demo/4326.html)
 * [custom SpatialReference](https://deyihu.github.io/maptalks.tileclip/demo/custom-sp.html)
 * [update mask](https://deyihu.github.io/maptalks.tileclip/demo/update-mask.html)
+* [identify projection](https://deyihu.github.io/maptalks.tileclip/demo/identify.html)
 
 ## Install
 
