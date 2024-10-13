@@ -15,27 +15,39 @@
         width: 100%;
         height: 100%
     }
+
+    .tools {
+        position: absolute;
+        z-index: 1;
+        height: 20px;
+        top: 0px;
+        width: 100%;
+        background-color: white;
+        border-bottom: 1px solid #c9c9c9;
+        display: none;
+    }
 </style>
 <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/maptalks/dist/maptalks.min.css' />
 <script type='text/javascript' src='https://cdn.jsdelivr.net/npm/maptalks-gl/dist/maptalks-gl.js'></script>
-<script type='text/javascript' src='https://cdn.jsdelivr.net/npm/maptalks.tileclip@latest/dist/maptalks.tileclip.js'></script>
+<script type='text/javascript'
+    src='https://cdn.jsdelivr.net/npm/maptalks.tileclip@latest/dist/maptalks.tileclip.js'></script>
 
 <body>
+    <div class="tools">
+        <button onclick="updateMask()">update mask</button>
+    </div>
     <div id="map" class="container"></div>
     <script>
 
         const tileActor = maptalks.getTileActor();
-        const maskId = '1';
-        const baseLayer = new maptalks.WMSTileLayer('wms', {
-            'tileSystem': [1, -1, -180, 90],
-            'urlTemplate': 'https://ows.terrestris.de/osm/service',
-            'crs': 'EPSG:4326',
-            'layers': 'OSM-WMS',
-            'styles': '',
-            'version': '1.3.0',
-            'format': 'image/png',
-            'transparent': true,
-            'uppercase': true
+        const maskId1 = '1';
+        const maskId2 = '2';
+        let currentMaskId = maskId1;
+        const baseLayer = new maptalks.TileLayer('base', {
+            // debug: true,
+            urlTemplate: "https://webst01.is.autonavi.com/appmaptile?style=6&x={x}&y={y}&z={z}",
+            subdomains: ["a", "b", "c", "d"],
+            // bufferPixel: 1
         })
 
         baseLayer.on('renderercreate', function (e) {
@@ -49,7 +61,7 @@
                         tileBBOX: baseLayer._getTileBBox(tile),
                         projection: baseLayer.getProjection().code,
                         tileSize: baseLayer.getTileSize().width,
-                        maskId,
+                        maskId: currentMaskId
                     }).then(image => {
                         callback(image);
                     }).catch(error => {
@@ -65,9 +77,6 @@
 
         var map = new maptalks.Map('map', {
             "center": [121.65586045, 31.12453538], "zoom": 9.064897200334302, "pitch": 0, "bearing": 0,
-            spatialReference: {
-                projection: 'EPSG:4326'
-            },
         });
 
         const sceneConfig = {
@@ -86,20 +95,31 @@
             lineColor: 'red'
         }
 
-        fetch('./青浦区.json').then(res => res.json()).then(geojson => {
-            const polygons = maptalks.GeoJSON.toGeometry(geojson, (geo => {
-                geo.setSymbol(symbol);
-            }));
-            layer.addGeometry(polygons);
-            map.setView({
-                "center": [121.0903305, 31.1156505], "zoom": 11, "pitch": 0, "bearing": 0
-            })
-            tileActor.injectMask(maskId, geojson.features[0]).then(data => {
+        const featch1 = fetch('./青浦区-holes.geojson').then(res => res.json());
+        const featch2 = fetch('./崇明区-holes.geojson').then(res => res.json());
+
+        Promise.all([featch1, featch2]).then(geojsons => {
+            geojsons.forEach(geojson => {
+                const polygons = maptalks.GeoJSON.toGeometry(geojson, (geo => {
+                    geo.setSymbol(symbol);
+                }));
+                layer.addGeometry(polygons);
+            });
+
+            const p1 = tileActor.injectMask(maskId1, geojsons[0].features[0]);
+            const p2 = tileActor.injectMask(maskId2, geojsons[1].features[0]);
+
+            Promise.all([featch1, featch2]).then(data => {
                 baseLayer.addTo(groupLayer);
-            }).catch(error => {
-                console.error(error);
-            })
+                document.querySelector('.tools').style.display = 'block';
+            });
         })
+
+
+        function updateMask() {
+            currentMaskId = currentMaskId === maskId1 ? maskId2 : maskId1;
+            baseLayer.forceReload();
+        }
 
 
 
