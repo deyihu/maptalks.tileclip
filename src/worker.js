@@ -23,6 +23,7 @@ export const onmessage = function (message, postResponse) {
             return;
         }
         postResponse(null, image, [image]);
+        return;
     }
     if (type === 'injectMask') {
         const geojson = injectMask(data.maskId, data.geojsonFeature);
@@ -31,9 +32,12 @@ export const onmessage = function (message, postResponse) {
             return;
         }
         postResponse();
+        return;
     }
     if (type === 'removeMask') {
         removeMask(data.maskId);
         postResponse();
+        return;
     }
+    console.error('not support message type:', type);
 };

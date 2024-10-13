@@ -1,13 +1,13 @@
-let globaCanvas;
+let globalCanvas;
 
 export function getCanvas(tileSize = 256) {
-    if (!globaCanvas && OffscreenCanvas) {
-        globaCanvas = new OffscreenCanvas(1, 1);
+    if (!globalCanvas && OffscreenCanvas) {
+        globalCanvas = new OffscreenCanvas(1, 1);
     }
-    if (globaCanvas) {
-        globaCanvas.width = globaCanvas.height = tileSize;
+    if (globalCanvas) {
+        globalCanvas.width = globalCanvas.height = tileSize;
     }
-    return globaCanvas;
+    return globalCanvas;
 }
 
 function clearCanvas(ctx) {

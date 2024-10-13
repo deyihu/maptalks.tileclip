@@ -14,7 +14,7 @@ export function isPolygon(feature) {
     return type === 'Polygon' || type === 'MultiPolygon';
 }
 
-export function is3857(projection) {
+export function isEPSG3857(projection) {
     return projection === 'EPSG:3857';
 }
 
@@ -48,7 +48,7 @@ function lnglat2Mercator(coordinates) {
 }
 
 function transformCoordinates(projection, coordinates) {
-    if (!is3857(projection)) {
+    if (!isEPSG3857(projection)) {
         return coordinates;
     } else {
         const transformRing = (coord) => {
@@ -91,7 +91,7 @@ function transformPixels(projection, tileBBOX, tileSize, coordinates) {
         }
         return result;
     };
-    if (is3857(projection)) {
+    if (isEPSG3857(projection)) {
         const [mminx, mminy] = lnglat2Mercator([minx, miny]);
         const [mmaxx, mmaxy] = lnglat2Mercator([maxx, maxy]);
         const mTileBBOX = [mminx, mminy, mmaxx, mmaxy];
