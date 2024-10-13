@@ -381,23 +381,25 @@ const workerCode = ` function (exports) { 'use strict';
 
   function transformPixels(projection, tileBBOX, tileSize, coordinates) {
       const [minx, miny, maxx, maxy] = tileBBOX;
+      const transformRing = (coord, bbox$1) => {
+          const result = [];
+          for (let i = 0, len = coord.length; i < len; i++) {
+              const c = coord[i];
+              if (Array.isArray(c[0])) {
+                  result.push(transformRing(c, bbox$1));
+              } else {
+                  result[i] = coordinate2Pixel(bbox$1, tileSize, c);
+              }
+          }
+          return result;
+      };
       if (is3857(projection)) {
           const [mminx, mminy] = lnglat2Mercator([minx, miny]);
           const [mmaxx, mmaxy] = lnglat2Mercator([maxx, maxy]);
           const mTileBBOX = [mminx, mminy, mmaxx, mmaxy];
-          const transformRing = (coord) => {
-              const result = [];
-              for (let i = 0, len = coord.length; i < len; i++) {
-                  const c = coord[i];
-                  if (Array.isArray(c[0])) {
-                      result.push(transformRing(c));
-                  } else {
-                      result[i] = coordinate2Pixel(mTileBBOX, tileSize, c);
-                  }
-              }
-              return result;
-          };
-          return transformRing(coordinates);
+          return transformRing(coordinates, mTileBBOX);
+      } else {
+          return transformRing(coordinates, tileBBOX);
       }
   }
 
