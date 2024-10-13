@@ -17,7 +17,6 @@ function clearCanvas(ctx) {
 
 export function getCanvasContext(canvas) {
     const ctx = canvas.getContext('2d');
-    clearCanvas(ctx);
     return ctx;
 }
 

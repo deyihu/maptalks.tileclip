@@ -10,7 +10,7 @@ export const onmessage = function (message, postResponse) {
     if (type === 'getTile') {
         const { url } = data;
         getTile(url, data).then(image => {
-            postResponse(null, image);
+            postResponse(null, image, [image]);
         }).catch(error => {
             postResponse(error);
         });
@@ -22,7 +22,7 @@ export const onmessage = function (message, postResponse) {
             postResponse(image);
             return;
         }
-        postResponse(null, image);
+        postResponse(null, image, [image]);
     }
     if (type === 'injectMask') {
         const geojson = injectMask(data.maskId, data.geojsonFeature);
@@ -30,10 +30,10 @@ export const onmessage = function (message, postResponse) {
             postResponse(geojson);
             return;
         }
-        postResponse(null, geojson);
+        postResponse();
     }
     if (type === 'removeMask') {
         removeMask(data.maskId);
-        postResponse(null);
+        postResponse();
     }
 };

@@ -236,7 +236,6 @@ const workerCode = ` function (exports) { 'use strict';
 
   function getCanvasContext(canvas) {
       const ctx = canvas.getContext('2d');
-      clearCanvas(ctx);
       return ctx;
   }
 
@@ -509,7 +508,7 @@ const workerCode = ` function (exports) { 'use strict';
       if (type === 'getTile') {
           const { url } = data;
           getTile(url, data).then(image => {
-              postResponse(null, image);
+              postResponse(null, image, [image]);
           }).catch(error => {
               postResponse(error);
           });
@@ -521,7 +520,7 @@ const workerCode = ` function (exports) { 'use strict';
               postResponse(image);
               return;
           }
-          postResponse(null, image);
+          postResponse(null, image, [image]);
       }
       if (type === 'injectMask') {
           const geojson = injectMask(data.maskId, data.geojsonFeature);
@@ -529,11 +528,11 @@ const workerCode = ` function (exports) { 'use strict';
               postResponse(geojson);
               return;
           }
-          postResponse(null, geojson);
+          postResponse();
       }
       if (type === 'removeMask') {
           removeMask(data.maskId);
-          postResponse(null);
+          postResponse();
       }
   };
 
