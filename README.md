@@ -123,13 +123,6 @@ import {
 const maskId = 'china';
 
 const tileActor = getTileActor();
-const polygon = {
-    "type": "Feature",
-    "geometry": {
-        "type": "Polygon",
-        "coordinates": []
-    }
-}
 
 tileActor.removeMask(maskId).then(data => {
 
@@ -150,8 +143,8 @@ import * as maptalks from 'maptalks';
 import {
     getTileActor
 } from 'maptalks.tileclip'
-const tileActor = maptalks.getTileActor();
-const maskId = '1';
+const tileActor = getTileActor();
+const maskId = 'china';
 const baseLayer = new maptalks.TileLayer('base', {
     debug: true,
     urlTemplate: '/arcgisonline/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
@@ -188,4 +181,18 @@ baseLayer.on('renderercreate', function(e) {
         })
     };
 });
+
+const polygon = {
+    "type": "Feature",
+    "geometry": {
+        "type": "Polygon",
+        "coordinates": []
+    }
+}
+
+tileActor.injectMask(maskId, polygon).then(data => {
+    baseLayer.addTo(map);
+}).catch(error => {
+    console.error(error);
+})
 ```
