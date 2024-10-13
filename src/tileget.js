@@ -4,10 +4,8 @@ export function getTile(url, options = {}) {
             reject(new Error('url is null'));
             return;
         }
-        fetch(url).then(res => res.blob()).then(blob => {
-            createImageBitmap(blob).then(image => {
-                resolve(image);
-            });
+        fetch(url).then(res => res.blob()).then(blob => createImageBitmap(blob)).then(imagebit => {
+            resolve(imagebit);
         }).catch(error => {
             reject(error);
         });
