@@ -118,20 +118,25 @@ export function clip(options = {}) {
     if (!maskId) {
         return new Error('maskId is null');
     }
-    const polygon = GeoJSONCache[maskId];
-    if (!polygon) {
+    const feature = GeoJSONCache[maskId];
+    if (!feature) {
         return new Error('not find mask by maskId:' + maskId);
     }
     const canvas = getCanvas(tileSize);
     if (!canvas) {
         return new Error('not find canvas.The current environment does not support OffscreenCanvas');
     }
-    const feature = GeoJSONCache[maskId];
     const bbox = feature.bbox;
+    if (!bbox) {
+        return tile;
+    }
+    const { coordinates, type } = feature.geometry;
+    if (!coordinates.length) {
+        return tile;
+    }
     if (!bboxIntersect(bbox, tileBBOX)) {
         return getBlankTile();
     }
-    const { coordinates, type } = polygon.geometry;
     let polygons = coordinates;
     if (type === 'Polygon') {
         polygons = [polygons];

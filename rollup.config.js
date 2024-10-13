@@ -33,13 +33,12 @@ function getEntry() {
 const bundles = [
     {
         input: 'src/worker',
+        external: external,
         plugins: product ? plugins.concat([terser(), mtkWorkerPlugin()]) : plugins.concat([mtkWorkerPlugin()]),
         output: {
             format: 'amd',
             name: 'maptalks',
-            globals: {
-                'maptalks': 'maptalks'
-            },
+            globals,
             extend: true,
             file: 'dist/worker.js'
         }
