@@ -14,6 +14,9 @@
 * [clip by polygon with holes](https://deyihu.github.io/maptalks.tileclip/demo/polygon-hole-clip.html)
 * [clip by multipolygon](https://deyihu.github.io/maptalks.tileclip/demo/multipolygon-clip.html)
 * [clip by multipolygon with holes](https://deyihu.github.io/maptalks.tileclip/demo/multipolygon-hole-clip.html)
+* [EPSG:4326](https://deyihu.github.io/maptalks.tileclip/demo/4326.html)
+* [custom SpatialReference](https://deyihu.github.io/maptalks.tileclip/demo/custom-sp.html)
+* [update mask](https://deyihu.github.io/maptalks.tileclip/demo/update-mask.html)
 
 ## Install
 
@@ -37,7 +40,7 @@ npm i maptalks.tileclip
 
 ### `getTileActor()`
 
-return TileActor instance
+return `TileActor` instance
 
 ```js
 import {
@@ -49,7 +52,7 @@ const tileActor = getTileActor();
 
 ### `TileActor` class
 
-Tile clip worker interaction class. abount [maptalks. Actor](https://github.com/maptalks/maptalks.js/blob/master/src/core/worker/Actor.ts)
+Tile clip worker interaction class. about [maptalks. Actor](https://github.com/maptalks/maptalks.js/blob/master/src/core/worker/Actor.ts) details
 
 ```js
 import {
@@ -62,7 +65,7 @@ const tileActor = getTileActor();
 #### methods
 
 * `getTile(options)` get tile imagebitmap by fetch in worker, return `Promise`
-  + `options.url`:data filter function
+  + `options.url`:tile url
 
 ```js
 import {
@@ -137,7 +140,7 @@ tileActor.removeMask(maskId).then(data => {
 
 * `clipTile(options)` clip tile by mask . return `Promise`
   + `options.tile`:tile imagebitmap data
-  + `options.tileBBOX`:tile BBOX
+  + `options.tileBBOX`:tile BBOX `[minx,miny,maxx,maxy]`
   + `options.projection`: Projection code, such as : EPSG:3857
   + `options.tileSize`:tile size 
   + `options.maskId`:mask key
