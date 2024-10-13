@@ -6,8 +6,8 @@
   "module": "index.js",
   "scripts": {
     "lint": "eslint src/**/*.js",
-    "worker": "rollup --environment BUILD:production -c rollup.worker.config.js && node build.js",
-    "build": "npm run worker && rollup --environment BUILD:production -c rollup.config.js"
+    "dev": "cross-env NODE_ENV=dev  rollup  -c -w",
+    "build": "cross-env NODE_ENV=prd  rollup  -c"
   },
   "files": [
     "dist",
@@ -29,7 +29,6 @@
     "lineclip": "^1.1.5"
   },
   "devDependencies": {
-    "chalk": "^4.1.0",
     "maptalks": "1.0.0-rc.37",
     "cross-env": "^5.1.4",
     "eslint": "^6.2.2",

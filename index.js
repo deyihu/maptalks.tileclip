@@ -1,8 +1,10 @@
 import { registerWorkerAdapter, worker } from 'maptalks';
-import { getWorkerCode, getWorkerName } from './src/worker/getworker';
+import WORKERCODE from './dist/worker';
 import { isPolygon } from './src/tileclip';
 
-registerWorkerAdapter(getWorkerName(), getWorkerCode());
+const WORKERNAME = '__maptalks.tileclip';
+
+registerWorkerAdapter(WORKERNAME, WORKERCODE);
 
 class TileActor extends worker.Actor {
 
@@ -82,7 +84,7 @@ let actor;
 
 export function getTileActor() {
     if (!actor) {
-        actor = new TileActor(getWorkerName());
+        actor = new TileActor(WORKERNAME);
     }
     return actor;
 }
