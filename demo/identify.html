@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>User Interactions - Draw tool to draw geometries</title>
+<style type="text/css">
+    html,
+    body {
+        margin: 0px;
+        height: 100%;
+        width: 100%
+    }
+
+    .container {
+        width: 100%;
+        height: 100%
+    }
+</style>
+<link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/maptalks/dist/maptalks.min.css' />
+<script type='text/javascript' src='https://cdn.jsdelivr.net/npm/maptalks-gl/dist/maptalks-gl.js'></script>
+<script type='text/javascript' src='https://unpkg.com/maptalks.tileclip@latest/dist/maptalks.tileclip.js'></script>
+
+<body>
+    <div id="map" class="container"></div>
+    <script>
+
+        const tileActor = maptalks.getTileActor();
+        const maskId = 'yuanshen';
+        let notfindImage;
+        // const SIZE = 17408;
+        // const HALF = SIZE / 2;
+        // //切图第一个参数分辨率
+        // const RES = 1280 * 6;
+        //原点
+        const ORIGIN = [-3568, 6286];
+        //切图的分辨率集合
+        const resolutions = [];
+
+
+        //一共13个层级
+        const zoom = 13;
+        let i = 0;
+        while (i <= zoom) {
+            resolutions.push(Math.pow(2, (zoom - i)));
+            i++;
+        }
+        console.log(resolutions);
+        const spatialReference = {
+            projection: "identity",
+            resolutions: resolutions,
+            // fullExtent: {
+            //     top: 0,
+            //     left: 0,
+            //     bottom: SIZE,
+            //     right: SIZE
+            // }
+        };
+
+        const cloneSp = JSON.parse(JSON.stringify(spatialReference));
+        cloneSp.resolutions.push(0.5, 0.25, 0.125);
+
+
+        // map.on('click', e => {
+        //     // console.log(e.coordinate.toArray());
+        // })
+
+        // const extent = [
+        //     -26308.77230221383,
+        //     -13760.477836008104,
+        //     22762.802931919003,
+        //     10954.216565766088
+        // ];
+        // map.setMaxExtent(extent);
+
+
+
+        const baseLayer = new maptalks.TileLayer("tile", {
+            urlTemplate: "https://assets.yuanshen.site/tiles_twt40/{z}/{x}_{y}.png",
+            // urlTemplate: "https://act-webstatic.mihoyo.com/ys-map-op/map/2/c64d14ffe710540c50df8df05c96f8b5/{x}_{y}_N.webp",
+            subdomains: ["a", "b", "c", "d"],
+            tileSystem: [1, -1].concat(ORIGIN),
+            spatialReference,
+            maxAvailableZoom: 13
+
+        })
+
+
+        baseLayer.on('renderercreate', function (e) {
+            //load tile image
+            //   img(Image): an Image object
+            //   url(String): the url of the tile
+            e.renderer.loadTileBitmap = function (url, tile, callback) {
+                tileActor.getTile({ url: maptalks.Util.getAbsoluteURL(url) }).then(imagebitmap => {
+                    tileActor.clipTile({
+                        tile: imagebitmap,
+                        tileBBOX: baseLayer._getTileBBox(tile),
+                        projection: baseLayer.getProjection().code,
+                        tileSize: baseLayer.getTileSize().width,
+                        maskId,
+                    }).then(image => {
+                        callback(image);
+                    }).catch(error => {
+                        //do some things
+                        console.error(error);
+                    })
+                }).catch(error => {
+                    //do some things
+                    console.error(error);
+                    createImageBitmap(notfindImage).then(image => {
+                        callback(image);
+                    })
+                })
+            };
+        });
+
+        const map = new maptalks.Map("map", {
+            "center": [0, 0], "zoom": 9.642674643106751, "pitch": 0, "bearing": 0,
+            zoomControl: true,
+            limitExtentOnMaxExtent: true,
+            spatialReference: cloneSp
+        });
+
+
+        const sceneConfig = {
+            postProcess: {
+                enable: true,
+                antialias: { enable: true }
+            }
+        };
+        const groupLayer = new maptalks.GroupGLLayer('group', [], { sceneConfig });
+        groupLayer.addTo(map);
+
+        const layer = new maptalks.VectorLayer('layer').addTo(map);
+
+        const symbol = {
+            polygonOpacity: 0,
+            lineColor: 'red'
+        }
+
+        fetch('./yuanshen.json').then(res => res.json()).then(geojson => {
+            const polygon = maptalks.GeoJSON.toGeometry(geojson);
+            polygon.setSymbol(symbol);
+            layer.addGeometry(polygon);
+
+            const canvas = document.createElement('canvas');
+            canvas.width = canvas.height = 256;
+            const ctx = canvas.getContext('2d');
+            ctx.font = "bold 48px serif";
+            ctx.fillText(404, canvas.width / 2, canvas.height / 2);
+            ctx.rect(0, 0, canvas.width, canvas.height);
+            ctx.stroke();
+            
+            createImageBitmap(canvas).then(image => {
+                notfindImage = image;
+                tileActor.injectMask(maskId, geojson).then(data => {
+                    baseLayer.addTo(groupLayer);
+                }).catch(error => {
+                    console.error(error);
+                })
+            })
+        })
+
+
+
+    </script>
+</body>
+
+</html>
