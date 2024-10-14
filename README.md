@@ -5,7 +5,9 @@
 * This plugin requires the runtime environment to support [OffscreenCanvas](https://developer.mozilla.org/zh-CN/docs/Web/API/OffscreenCanvas)
     
 
- * Considering performance, all operations are completed within the web worker
+* Considering performance, all operations are completed within the web worker
+
+* If you are familiar with other map engines, you can also apply them to other map engines  [leaflet demo](https://deyihu.github.io/maptalks.tileclip/demo/leaflet.html)
 
 ## Examples
 
