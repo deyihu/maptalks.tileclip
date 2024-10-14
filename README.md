@@ -18,6 +18,7 @@
 * [custom SpatialReference](https://deyihu.github.io/maptalks.tileclip/demo/custom-sp.html)
 * [update mask](https://deyihu.github.io/maptalks.tileclip/demo/update-mask.html)
 * [identify projection](https://deyihu.github.io/maptalks.tileclip/demo/identify.html)
+* [leaflet demo](https://deyihu.github.io/maptalks.tileclip/demo/leaflet.html)
 
 ## Install
 
@@ -65,7 +66,7 @@ const tileActor = getTileActor();
 
 #### methods
 
-* `getTile(options)` get tile imagebitmap by fetch in worker, return `Promise`
+* `getTile(options)` get tile [ImageBitmap](https://developer.mozilla.org/zh-CN/docs/Web/API/ImageBitmap) by fetch in worker, return `Promise`
   + `options.url`:tile url
 
 ```js
@@ -133,11 +134,12 @@ tileActor.removeMask(maskId).then(data => {
 ```
 
 * `clipTile(options)` clip tile by mask . return `Promise`
-  + `options.tile`:tile imagebitmap data
+  + `options.tile`:tile [ImageBitmap](https://developer.mozilla.org/zh-CN/docs/Web/API/ImageBitmap)  data
   + `options.tileBBOX`:tile BBOX `[minx,miny,maxx,maxy]`
   + `options.projection`: Projection code, such as : EPSG:3857
   + `options.tileSize`:tile size 
   + `options.maskId`:mask key
+  + `options.returnBlobURL`:Do you want to return [Blob URL by createObjectURL() ](https://developer.mozilla.org/zh-CN/docs/Web/API/URL/createObjectURL_static)?When the blob URL is no longer in use, be sure to destroy its value [revokeObjectURL()](https://developer.mozilla.org/zh-CN/docs/Web/API/URL/revokeObjectURL_static)
 
 ```js
 import * as maptalks from 'maptalks';
