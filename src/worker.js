@@ -17,12 +17,15 @@ export const onmessage = function (message, postResponse) {
         return;
     }
     if (type === 'clipTile') {
-        const image = clip(data);
-        if (image instanceof Error) {
-            postResponse(image);
-            return;
-        }
-        postResponse(null, image, [image]);
+        clip(data).then(image => {
+            const buffers = [];
+            if (image instanceof ImageBitmap) {
+                buffers.push(image);
+            }
+            postResponse(null, image, buffers);
+        }).catch(error => {
+            postResponse(error);
+        });
         return;
     }
     if (type === 'injectMask') {

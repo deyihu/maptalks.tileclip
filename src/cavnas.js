@@ -20,8 +20,8 @@ export function getCanvasContext(canvas) {
     return ctx;
 }
 
-export function getBlankTile() {
-    const canvas = getCanvas();
+export function getBlankTile(tileSize) {
+    const canvas = getCanvas(tileSize);
     const ctx = getCanvasContext(canvas);
     clearCanvas(ctx);
     // ctx.fillText('404', 100, 100);
@@ -63,4 +63,14 @@ export function imageClip(canvas, polygons, image) {
     const bitImage = canvas.transferToImageBitmap();
     ctx.restore();
     return bitImage;
+}
+
+export function toBlobURL(imagebitmap) {
+    const canvas = getCanvas();
+    canvas.width = imagebitmap.width;
+    canvas.height = imagebitmap.height;
+    const ctx = getCanvasContext(canvas);
+    clearCanvas(ctx);
+    ctx.drawImage(imagebitmap, 0, 0);
+    return canvas.convertToBlob();
 }
