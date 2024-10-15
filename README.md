@@ -12,6 +12,7 @@
 ## Examples
 
 * [simple get tile](https://deyihu.github.io/maptalks.tileclip/demo/tile.html)
+* [get tile with filter](https://deyihu.github.io/maptalks.tileclip/demo/polygon-hole-clip-filter.html)
 * [clip by polygon](https://deyihu.github.io/maptalks.tileclip/demo/polygon-clip.html)
 * [clip by polygon with holes](https://deyihu.github.io/maptalks.tileclip/demo/polygon-hole-clip.html)
 * [clip by multipolygon](https://deyihu.github.io/maptalks.tileclip/demo/multipolygon-clip.html)
@@ -70,6 +71,7 @@ const tileActor = getTileActor();
 
 * `getTile(options)` get tile [ImageBitmap](https://developer.mozilla.org/zh-CN/docs/Web/API/ImageBitmap) by fetch in worker, return `Promise`
   + `options.url`:tile url
+  + `options.filter`:[CanvasRenderingContext2D.filter](https://mdn.org.cn/en-US/docs/Web/API/CanvasRenderingContext2D/filter)
 
 ```js
 import {
