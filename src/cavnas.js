@@ -74,3 +74,19 @@ export function toBlobURL(imagebitmap) {
     ctx.drawImage(imagebitmap, 0, 0);
     return canvas.convertToBlob();
 }
+
+export function imageFilter(canvas, imagebitmap, filter) {
+    if (!filter) {
+        return imagebitmap;
+    }
+    canvas.width = imagebitmap.width;
+    canvas.height = imagebitmap.height;
+    const ctx = getCanvasContext(canvas);
+    clearCanvas(ctx);
+    ctx.save();
+    ctx.filter = filter;
+    ctx.drawImage(imagebitmap, 0, 0);
+    ctx.restore();
+    const bitImage = canvas.transferToImageBitmap();
+    return bitImage;
+}
