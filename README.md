@@ -21,6 +21,7 @@
 * [custom SpatialReference](https://deyihu.github.io/maptalks.tileclip/demo/custom-sp.html)
 * [update mask](https://deyihu.github.io/maptalks.tileclip/demo/update-mask.html)
 * [identify projection](https://deyihu.github.io/maptalks.tileclip/demo/identify.html)
+* [water mark](https://deyihu.github.io/maptalks.tileclip/demo/watermark.html)
 * [leaflet demo](https://deyihu.github.io/maptalks.tileclip/demo/leaflet.html)
 
 ## Install
