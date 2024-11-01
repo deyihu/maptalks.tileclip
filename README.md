@@ -137,13 +137,28 @@ tileActor.removeMask(maskId).then(data => {
 })
 ```
 
+* `maskHasInjected(maskId)` Has the mask been injected . return `Boolean`
+
+  + `maskId`: mask id
+
+```js
+import {
+    getTileActor
+} from 'maptalks.tileclip'
+
+const maskId = 'china';
+
+const tileActor = getTileActor();
+const result = tileActor.maskHasInjected(maskId);
+```
+
 * `clipTile(options)` clip tile by mask . return `Promise`
   + `options.tile`:tile [ImageBitmap](https://developer.mozilla.org/zh-CN/docs/Web/API/ImageBitmap)  data
   + `options.tileBBOX`:tile BBOX `[minx,miny,maxx,maxy]`
   + `options.projection`: Projection code, such as : EPSG:3857
   + `options.tileSize`:tile size 
   + `options.maskId`:mask key
-  + `options.returnBlobURL`:Do you want to return [Blob URL by createObjectURL() ](https://developer.mozilla.org/zh-CN/docs/Web/API/URL/createObjectURL_static)?When the blob URL is no longer in use, be sure to destroy its value [revokeObjectURL()](https://developer.mozilla.org/zh-CN/docs/Web/API/URL/revokeObjectURL_static)
+  + `options.returnBlobURL`: Do you want to return [Blob URL by createObjectURL() ](https://developer.mozilla.org/zh-CN/docs/Web/API/URL/createObjectURL_static)? When the blob URL is no longer in use, be sure to destroy its value [revokeObjectURL()](https://developer.mozilla.org/zh-CN/docs/Web/API/URL/revokeObjectURL_static)
 
 ```js
 import * as maptalks from 'maptalks';
