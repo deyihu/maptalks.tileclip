@@ -6,6 +6,8 @@ const WORKERNAME = '__maptalks.tileclip';
 
 registerWorkerAdapter(WORKERNAME, WORKERCODE);
 
+const maskMap = {};
+
 class TileActor extends worker.Actor {
 
     getTile(options = {}) {
@@ -42,6 +44,10 @@ class TileActor extends worker.Actor {
                 reject(new Error('maskId is null'));
                 return;
             }
+            if (maskMap[maskId]) {
+                reject(new Error(`${maskId} has injected`));
+                return;
+            }
             if (!isPolygon(geojsonFeature)) {
                 reject(new Error('geojsonFeature is not Polygon,It should be GeoJSON Polygon/MultiPolygon'));
                 return;
@@ -56,6 +62,7 @@ class TileActor extends worker.Actor {
                     return;
                 }
                 resolve();
+                maskMap[maskId] = true;
             });
         });
     }
@@ -75,8 +82,17 @@ class TileActor extends worker.Actor {
                     return;
                 }
                 resolve();
+                delete maskMap[maskId];
             });
         });
+    }
+
+    maskHasInjected(maskId) {
+        if (!maskId) {
+            console.error('maskId is null');
+            return false;
+        }
+        return !!maskMap[maskId];
     }
 }
 
