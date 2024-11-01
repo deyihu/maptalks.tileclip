@@ -67,19 +67,20 @@
 
         const layer = new maptalks.VectorLayer('layer').addTo(map);
 
-        
+
         const symbol = {
             polygonOpacity: 0,
             lineColor: 'red'
         }
 
         fetch('./上海市.json').then(res => res.json()).then(geojson => {
-             const polygons = maptalks.GeoJSON.toGeometry(geojson, (geo => {
+            const polygons = maptalks.GeoJSON.toGeometry(geojson, (geo => {
                 geo.setSymbol(symbol);
             }));
             layer.addGeometry(polygons);
             tileActor.injectMask(maskId, geojson.features[0]).then(data => {
                 baseLayer.addTo(map);
+                console.log(tileActor.maskHasInjected(maskId))
             }).catch(error => {
                 console.error(error);
             })
