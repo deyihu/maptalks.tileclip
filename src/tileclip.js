@@ -1,6 +1,6 @@
 import geojsonbbox from '@maptalks/geojson-bbox';
 import lineclip from 'lineclip';
-import { getBlankTile, getCanvas, imageClip, toBlobURL } from './cavnas';
+import { getBlankTile, getCanvas, imageClip, toBlobURL } from './canvas';
 import { bboxInBBOX, bboxIntersect } from './bbox';
 
 const GeoJSONCache = {};

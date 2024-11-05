@@ -1,4 +1,4 @@
-import { getCanvas, imageFilter } from './cavnas';
+import { getCanvas, imageFilter } from './canvas';
 
 const headers = {
     'accept': 'image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8',
