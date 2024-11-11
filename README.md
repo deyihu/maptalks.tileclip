@@ -90,6 +90,42 @@ tileActor.getTile({
 })
 ```
 
+* `getTileWithMaxZoom(options)` get tile [ImageBitmap](https://developer.mozilla.org/zh-CN/docs/Web/API/ImageBitmap) by fetch in worker, return `Promise`.When the level exceeds the maximum level, tiles will be automatically cut
+  + `options.x`:tile col
+  + `options.y`:tile row
+  + `options.z`:tile zoom
+  + `options.maxAvailableZoom`:tile The maximum visible level, such as 18
+  + `options.urlTemplate`:tile urlTemplate.https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}
+  + `options.filter`:[CanvasRenderingContext2D.filter](https://mdn.org.cn/en-US/docs/Web/API/CanvasRenderingContext2D/filter)
+
+```js
+import {
+    getTileActor
+} from 'maptalks.tileclip'
+
+const tileActor = getTileActor();
+
+const {
+    x,
+    y,
+    z
+} = tile;
+const urlTemplate = baseLayer.options.urlTemplate;
+const maxAvailableZoom = 18;
+
+tileActor.getTileWithMaxZoom({
+    x,
+    y,
+    z,
+    urlTemplate,
+    maxAvailableZoom,
+}).then(imagebitmap => {
+    consle.log(imagebitmap);
+}).catch(error => {
+    //do some things
+})
+```
+
 * `injectMask(maskId,Polygon/MultiPolygon)` inject Mask(GeoJSON. Polygon) for clip tiles . return `Promise`
 
   + `maskId`: mask id, Cache mask data in the worker
