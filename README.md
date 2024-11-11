@@ -22,6 +22,8 @@
 * [update mask](https://deyihu.github.io/maptalks.tileclip/demo/update-mask.html)
 * [identify projection](https://deyihu.github.io/maptalks.tileclip/demo/identify.html)
 * [water mark](https://deyihu.github.io/maptalks.tileclip/demo/watermark.html)
+* [maxAvailableZoom](https://deyihu.github.io/maptalks.tileclip/demo/maxAvailableZoom.html)
+* [maxAvailableZoom polygon clip](https://deyihu.github.io/maptalks.tileclip/demo/maxAvailableZoom-polygon-clip.html)
 * [leaflet demo](https://deyihu.github.io/maptalks.tileclip/demo/leaflet.html)
 
 ## Install
