@@ -1,5 +1,5 @@
 import { clip, injectMask, removeMask } from './tileclip';
-import { getTile } from './tileget';
+import { getTile, getTileWithMaxZoom } from './tileget';
 
 export const initialize = function () {
 };
@@ -10,6 +10,14 @@ export const onmessage = function (message, postResponse) {
     if (type === 'getTile') {
         const { url } = data;
         getTile(url, data).then(image => {
+            postResponse(null, image, [image]);
+        }).catch(error => {
+            postResponse(error);
+        });
+        return;
+    }
+    if (type === 'getTileWithMaxZoom') {
+        getTileWithMaxZoom(data).then(image => {
             postResponse(null, image, [image]);
         }).catch(error => {
             postResponse(error);

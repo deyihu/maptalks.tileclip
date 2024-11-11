@@ -1,9 +1,15 @@
-import { getCanvas, imageFilter } from './canvas';
+import { getCanvas, imageFilter, imageTileScale } from './canvas';
+
+const CANVAS_ERROR_MESSAGE = new Error('not find canvas.The current environment does not support OffscreenCanvas');
 
 const headers = {
     'accept': 'image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8',
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36 Edg/107.0.1418.26'
 };
+
+function isNumber(value) {
+    return typeof value === 'number';
+}
 
 export function getTile(url, options = {}) {
     return new Promise((resolve, reject) => {
@@ -18,7 +24,7 @@ export function getTile(url, options = {}) {
             if (filter) {
                 const canvas = getCanvas();
                 if (!canvas) {
-                    reject(new Error('not find canvas.The current environment does not support OffscreenCanvas'));
+                    reject(CANVAS_ERROR_MESSAGE);
                 } else {
                     resolve(imageFilter(canvas, imagebit, filter));
                 }
@@ -29,4 +35,93 @@ export function getTile(url, options = {}) {
             reject(error);
         });
     });
+}
+
+export function getTileWithMaxZoom(options = {}) {
+    const { urlTemplate, x, y, z, maxAvailableZoom } = options;
+    const maxZoomEnable = maxAvailableZoom && isNumber(maxAvailableZoom) && maxAvailableZoom >= 1;
+    return new Promise((resolve, reject) => {
+        if (!maxZoomEnable) {
+            reject(new Error('maxAvailableZoom is error'));
+            return;
+        }
+        if (!urlTemplate) {
+            reject(new Error('urlTemplate is error'));
+            return;
+        }
+        if (!isNumber(x) || !isNumber(y) || !isNumber(z)) {
+            reject(new Error('x/y/z is error'));
+            return;
+        }
+        let dxScale, dyScale, wScale, hScale;
+        let tileX = x, tileY = y, tileZ = z;
+        const zoomOffset = z - maxAvailableZoom;
+        if (zoomOffset > 0) {
+            let px = x, py = y;
+            let zoom = z;
+            // parent tile
+            while (zoom > maxAvailableZoom) {
+                px = Math.floor(px / 2);
+                py = Math.floor(py / 2);
+                zoom--;
+            }
+            const scale = Math.pow(2, zoomOffset);
+            // child tiles
+            let startX = Math.floor(px * scale);
+            let endX = startX + scale;
+            let startY = Math.floor(py * scale);
+            let endY = startY + scale;
+            if (startX > x) {
+                startX--;
+                endX--;
+            }
+            if (startY > y) {
+                startY--;
+                endY--;
+            }
+            // console.log(startCol, endCol, startRow, endRow);
+            dxScale = (x - startX) / (endX - startX);
+            dyScale = (y - startY) / (endY - startY);
+            wScale = 1 / (endX - startX);
+            hScale = 1 / (endY - startY);
+            // console.log(dxScale, dyScale, wScale, hScale);
+            tileX = px;
+            tileY = py;
+            tileZ = maxAvailableZoom;
+        }
+        const url = urlTemplate.replace('{x}', tileX).replace('{y}', tileY).replace('{z}', tileZ);
+        fetch(url, {
+            headers
+        }).then(res => res.blob()).then(blob => createImageBitmap(blob)).then(imagebit => {
+            let image;
+            const filter = options.filter;
+            if (filter) {
+                const canvas = getCanvas();
+                if (!canvas) {
+                    reject(CANVAS_ERROR_MESSAGE);
+                    return;
+                } else {
+                    image = (imageFilter(canvas, imagebit, filter));
+                }
+            } else {
+                image = imagebit;
+            }
+            if (zoomOffset <= 0) {
+                resolve(image);
+                return;
+            }
+            const canvas = getCanvas();
+            if (!canvas) {
+                reject(CANVAS_ERROR_MESSAGE);
+                return;
+            }
+            const { width, height } = image;
+            const dx = width * dxScale, dy = height * dyScale, w = width * wScale, h = height * hScale;
+            const imageBitMap = imageTileScale(canvas, image, dx, dy, w, h);
+            resolve(imageBitMap);
+        }).catch(error => {
+            reject(error);
+        });
+    });
+
 }

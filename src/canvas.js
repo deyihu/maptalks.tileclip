@@ -90,3 +90,17 @@ export function imageFilter(canvas, imagebitmap, filter) {
     const bitImage = canvas.transferToImageBitmap();
     return bitImage;
 }
+
+export function imageTileScale(canvas, imagebitmap, dx, dy, w, h) {
+    canvas.width = imagebitmap.width;
+    canvas.height = imagebitmap.height;
+    const ctx = getCanvasContext(canvas);
+    clearCanvas(ctx);
+    ctx.save();
+
+    // console.log(dx,dy,w,h);
+    ctx.drawImage(imagebitmap, dx, dy, w, h, 0, 0, canvas.width, canvas.height);
+    ctx.restore();
+    const bitImage = canvas.transferToImageBitmap();
+    return bitImage;
+}

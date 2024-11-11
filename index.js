@@ -22,6 +22,18 @@ class TileActor extends worker.Actor {
         });
     }
 
+    getTileWithMaxZoom(options = {}) {
+        return new Promise((resolve, reject) => {
+            this.send(Object.assign({}, { _type: 'getTileWithMaxZoom' }, options), null, (error, image) => {
+                if (error) {
+                    reject(error);
+                } else {
+                    resolve(image);
+                }
+            });
+        });
+    }
+
     clipTile(options = {}) {
         return new Promise((resolve, reject) => {
             const buffers = [];
