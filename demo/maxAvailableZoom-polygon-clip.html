@@ -69,6 +69,7 @@
         });
 
         var map = new maptalks.Map('map', {
+            zoomControl: true,
             "center": [121.65586045, 31.12453538], "zoom": 9.064897200334302, "pitch": 0, "bearing": 0,
         });
 
@@ -81,6 +82,14 @@
         const groupLayer = new maptalks.GroupGLLayer('group', [], { sceneConfig });
         groupLayer.addTo(map);
 
+        const layer = new maptalks.VectorLayer('layer').addTo(map);
+
+        const symbol = {
+            polygonOpacity: 0,
+            lineColor: 'red'
+        }
+
+
         // baseLayer.addTo(groupLayer);
 
         fetch('./青浦区-holes.geojson').then(res => res.json()).then(geojson => {
@@ -89,7 +98,7 @@
             }));
             layer.addGeometry(polygons);
             map.setView({
-                "center": [121.0903305, 31.1156505], "zoom": 11, "pitch": 0, "bearing": 0
+                "center":[120.9813688,31.06587294],"zoom":19.516412543204773,"pitch":0,"bearing":0
             })
             tileActor.injectMask(maskId, geojson.features[0]).then(data => {
                 baseLayer.addTo(groupLayer);

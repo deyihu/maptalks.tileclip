@@ -47,7 +47,7 @@
                     z,
                     urlTemplate,
                     maxAvailableZoom,
-                    filter: 'sepia(100%) invert(90%)'
+                    // filter: 'sepia(100%) invert(90%)'
                 }).then(imagebitmap => {
                     callback(imagebitmap);
                 }).catch(error => {
@@ -58,7 +58,8 @@
         });
 
         var map = new maptalks.Map('map', {
-            "center": [121.65586045, 31.12453538], "zoom": 9.064897200334302, "pitch": 0, "bearing": 0,
+            zoomControl: true,
+            "center": [121.65586045, 31.12453538], "zoom": 18.064897200334302, "pitch": 0, "bearing": 0,
         });
 
         const sceneConfig = {
