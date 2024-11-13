@@ -78,11 +78,6 @@ const tileActor = getTileActor();
   + `options.headers`:fetch headers params. if need
 
 ```js
-import {
-    getTileActor
-} from 'maptalks.tileclip'
-
-const tileActor = getTileActor();
 
 tileActor.getTile({
     url: 'https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/12/1663/3425',
