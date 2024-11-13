@@ -109,7 +109,7 @@
             const p1 = tileActor.injectMask(maskId1, geojsons[0].features[0]);
             const p2 = tileActor.injectMask(maskId2, geojsons[1].features[0]);
 
-            Promise.all([featch1, featch2]).then(data => {
+            Promise.all([p1, p2]).then(data => {
                 baseLayer.addTo(groupLayer);
                 document.querySelector('.tools').style.display = 'block';
             });
