@@ -2,7 +2,7 @@ import { getCanvas, imageFilter, imageTileScale } from './canvas';
 
 const CANVAS_ERROR_MESSAGE = new Error('not find canvas.The current environment does not support OffscreenCanvas');
 
-const headers = {
+const HEADERS = {
     'accept': 'image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8',
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36 Edg/107.0.1418.26'
 };
@@ -17,6 +17,7 @@ export function getTile(url, options = {}) {
             reject(new Error('url is null'));
             return;
         }
+        const headers = Object.assign({}, HEADERS, options.headers || {});
         fetch(url, {
             headers
         }).then(res => res.blob()).then(blob => createImageBitmap(blob)).then(imagebit => {
@@ -90,6 +91,7 @@ export function getTileWithMaxZoom(options = {}) {
             tileZ = maxAvailableZoom;
         }
         const url = urlTemplate.replace('{x}', tileX).replace('{y}', tileY).replace('{z}', tileZ);
+        const headers = Object.assign({}, HEADERS, options.headers || {});
         fetch(url, {
             headers
         }).then(res => res.blob()).then(blob => createImageBitmap(blob)).then(imagebit => {
