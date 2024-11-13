@@ -75,6 +75,7 @@ const tileActor = getTileActor();
 * `getTile(options)` get tile [ImageBitmap](https://developer.mozilla.org/zh-CN/docs/Web/API/ImageBitmap) by fetch in worker, return `Promise`
   + `options.url`:tile url
   + `options.filter`:[CanvasRenderingContext2D.filter](https://mdn.org.cn/en-US/docs/Web/API/CanvasRenderingContext2D/filter)
+  + `options.headers`:fetch headers params. if need
 
 ```js
 import {
@@ -84,7 +85,10 @@ import {
 const tileActor = getTileActor();
 
 tileActor.getTile({
-    url: 'https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/12/1663/3425'
+    url: 'https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/12/1663/3425',
+    headers: {
+        ...
+    }
 }).then(imagebitmap => {
     consle.log(imagebitmap);
 }).catch(error => {
@@ -92,20 +96,16 @@ tileActor.getTile({
 })
 ```
 
-* `getTileWithMaxZoom(options)` get tile [ImageBitmap](https://developer.mozilla.org/zh-CN/docs/Web/API/ImageBitmap) by fetch in worker, return `Promise`.When the level exceeds the maximum level, tiles will be automatically cut
+* `getTileWithMaxZoom(options)` get tile [ImageBitmap](https://developer.mozilla.org/zh-CN/docs/Web/API/ImageBitmap) by fetch in worker, return `Promise`. When the level exceeds the maximum level, tiles will be automatically cut
   + `options.x`:tile col
   + `options.y`:tile row
   + `options.z`:tile zoom
   + `options.maxAvailableZoom`:tile The maximum visible level, such as 18
   + `options.urlTemplate`:tile urlTemplate.https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}
   + `options.filter`:[CanvasRenderingContext2D.filter](https://mdn.org.cn/en-US/docs/Web/API/CanvasRenderingContext2D/filter)
+  + `options.headers`:fetch headers params. if need
 
 ```js
-import {
-    getTileActor
-} from 'maptalks.tileclip'
-
-const tileActor = getTileActor();
 
 const {
     x,
@@ -121,6 +121,9 @@ tileActor.getTileWithMaxZoom({
     z,
     urlTemplate,
     maxAvailableZoom,
+    headers: {
+        ...
+    }
 }).then(imagebitmap => {
     consle.log(imagebitmap);
 }).catch(error => {
@@ -134,13 +137,10 @@ tileActor.getTileWithMaxZoom({
   + `Polygon/MultiPolygon` GeoJSON Polygon/MultiPolygon [GeoJSON SPEC](https://datatracker.ietf.org/doc/html/rfc7946#section-3.1.6)
 
 ```js
-import {
-    getTileActor
-} from 'maptalks.tileclip'
+
 
 const maskId = 'china';
 
-const tileActor = getTileActor();
 const polygon = {
     "type": "Feature",
     "geometry": {
@@ -161,13 +161,9 @@ tileActor.injectMask(maskId, polygon).then(data => {
   + `maskId`: mask id
 
 ```js
-import {
-    getTileActor
-} from 'maptalks.tileclip'
+
 
 const maskId = 'china';
-
-const tileActor = getTileActor();
 
 tileActor.removeMask(maskId).then(data => {
 
@@ -181,13 +177,8 @@ tileActor.removeMask(maskId).then(data => {
   + `maskId`: mask id
 
 ```js
-import {
-    getTileActor
-} from 'maptalks.tileclip'
 
 const maskId = 'china';
-
-const tileActor = getTileActor();
 const result = tileActor.maskHasInjected(maskId);
 ```
 
@@ -200,12 +191,14 @@ const result = tileActor.maskHasInjected(maskId);
   + `options.returnBlobURL`: Do you want to return [Blob URL by createObjectURL() ](https://developer.mozilla.org/zh-CN/docs/Web/API/URL/createObjectURL_static)? When the blob URL is no longer in use, be sure to destroy its value [revokeObjectURL()](https://developer.mozilla.org/zh-CN/docs/Web/API/URL/revokeObjectURL_static)
 
 ```js
-import * as maptalks from 'maptalks';
+import * as maptalks from 'maptalks-gl';
 import {
     getTileActor
-} from 'maptalks.tileclip'
+} from 'maptalks.tileclip';
+
 const tileActor = getTileActor();
 const maskId = 'china';
+
 const baseLayer = new maptalks.TileLayer('base', {
     debug: true,
     urlTemplate: '/arcgisonline/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
