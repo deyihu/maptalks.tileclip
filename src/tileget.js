@@ -1,4 +1,5 @@
 import { getCanvas, imageFilter, imageTileScale } from './canvas';
+import LRUCache from './LRUCache';
 
 const CANVAS_ERROR_MESSAGE = new Error('not find canvas.The current environment does not support OffscreenCanvas');
 
@@ -11,6 +12,37 @@ function isNumber(value) {
     return typeof value === 'number';
 }
 
+const tileCache = new LRUCache(200, (image) => {
+    if (image && image.close) {
+        image.close();
+    }
+});
+
+function fetchTile(url, headers = {}) {
+    return new Promise((resolve, reject) => {
+        const copyImageBitMap = (image) => {
+            createImageBitmap(image).then(imagebit => {
+                resolve(imagebit);
+            }).catch(error => {
+                reject(error);
+            });
+        };
+        const image = tileCache.get(url);
+        if (image) {
+            copyImageBitMap(image);
+        } else {
+            fetch(url, {
+                headers
+            }).then(res => res.blob()).then(blob => createImageBitmap(blob)).then(image => {
+                tileCache.add(url, image);
+                copyImageBitMap(image);
+            }).catch(error => {
+                reject(error);
+            });
+        }
+    });
+}
+
 export function getTile(url, options = {}) {
     return new Promise((resolve, reject) => {
         if (!url) {
@@ -18,9 +50,7 @@ export function getTile(url, options = {}) {
             return;
         }
         const headers = Object.assign({}, HEADERS, options.headers || {});
-        fetch(url, {
-            headers
-        }).then(res => res.blob()).then(blob => createImageBitmap(blob)).then(imagebit => {
+        fetchTile(url, headers).then(imagebit => {
             const filter = options.filter;
             if (filter) {
                 const canvas = getCanvas();
@@ -92,9 +122,8 @@ export function getTileWithMaxZoom(options = {}) {
         }
         const url = urlTemplate.replace('{x}', tileX).replace('{y}', tileY).replace('{z}', tileZ);
         const headers = Object.assign({}, HEADERS, options.headers || {});
-        fetch(url, {
-            headers
-        }).then(res => res.blob()).then(blob => createImageBitmap(blob)).then(imagebit => {
+
+        fetchTile(url, headers).then(imagebit => {
             let image;
             const filter = options.filter;
             if (filter) {
