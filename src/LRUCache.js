@@ -1,4 +1,4 @@
-
+// copy from https://github.com/maptalks/maptalks.js/blob/master/src/core/util/LRUCache.ts
 const nullOnRemove = () => { };
 
 class LRUCache {
