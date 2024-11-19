@@ -31,10 +31,11 @@ function fetchTile(url, headers = {}, options) {
         if (image) {
             copyImageBitMap(image);
         } else {
-            fetch(url, {
+            const fetchOptions = options.fetchOptions || {
                 headers,
                 referrer: options.referrer
-            }).then(res => res.blob()).then(blob => createImageBitmap(blob)).then(image => {
+            };
+            fetch(url, fetchOptions).then(res => res.blob()).then(blob => createImageBitmap(blob)).then(image => {
                 tileCache.add(url, image);
                 copyImageBitMap(image);
             }).catch(error => {
