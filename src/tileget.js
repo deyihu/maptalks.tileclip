@@ -18,7 +18,7 @@ const tileCache = new LRUCache(200, (image) => {
     }
 });
 
-function fetchTile(url, headers = {}) {
+function fetchTile(url, headers = {}, options) {
     return new Promise((resolve, reject) => {
         const copyImageBitMap = (image) => {
             createImageBitmap(image).then(imagebit => {
@@ -32,7 +32,8 @@ function fetchTile(url, headers = {}) {
             copyImageBitMap(image);
         } else {
             fetch(url, {
-                headers
+                headers,
+                referrer: options.referrer
             }).then(res => res.blob()).then(blob => createImageBitmap(blob)).then(image => {
                 tileCache.add(url, image);
                 copyImageBitMap(image);
@@ -50,7 +51,7 @@ export function getTile(url, options = {}) {
             return;
         }
         const headers = Object.assign({}, HEADERS, options.headers || {});
-        fetchTile(url, headers).then(imagebit => {
+        fetchTile(url, headers, options).then(imagebit => {
             const filter = options.filter;
             if (filter) {
                 const canvas = getCanvas();
@@ -123,7 +124,7 @@ export function getTileWithMaxZoom(options = {}) {
         const url = urlTemplate.replace('{x}', tileX).replace('{y}', tileY).replace('{z}', tileZ);
         const headers = Object.assign({}, HEADERS, options.headers || {});
 
-        fetchTile(url, headers).then(imagebit => {
+        fetchTile(url, headers, options).then(imagebit => {
             let image;
             const filter = options.filter;
             if (filter) {

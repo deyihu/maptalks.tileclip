@@ -12,6 +12,7 @@ class TileActor extends worker.Actor {
 
     getTile(options = {}) {
         return new Promise((resolve, reject) => {
+            options.referrer = options.referrer || document.location.href;
             this.send(Object.assign({}, { _type: 'getTile' }, options), null, (error, image) => {
                 if (error) {
                     reject(error);
@@ -24,6 +25,7 @@ class TileActor extends worker.Actor {
 
     getTileWithMaxZoom(options = {}) {
         return new Promise((resolve, reject) => {
+            options.referrer = options.referrer || document.location.href;
             this.send(Object.assign({}, { _type: 'getTileWithMaxZoom' }, options), null, (error, image) => {
                 if (error) {
                     reject(error);
