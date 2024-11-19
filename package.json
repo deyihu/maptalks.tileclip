@@ -18,12 +18,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/deyihu/maptalks.tileclip.git"
+    "url": "git+https://github.com/maptalks/maptalks.tileclip.git"
   },
   "bugs": {
-    "url": "https://github.com/deyihu/maptalks.tileclip/issues"
+    "url": "https://github.com/maptalks/maptalks.tileclip/issues"
   },
-  "homepage": "https://github.com/deyihu/maptalks.tileclip#readme",
+  "homepage": "https://github.com/maptalks/maptalks.tileclip#readme",
   "dependencies": {
     "@maptalks/geojson-bbox": "^1.0.5",
     "lineclip": "^1.1.5"
