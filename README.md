@@ -24,6 +24,7 @@
 * [water mark](https://deyihu.github.io/maptalks.tileclip/demo/watermark.html)
 * [maxAvailableZoom](https://deyihu.github.io/maptalks.tileclip/demo/maxAvailableZoom.html)
 * [maxAvailableZoom polygon clip](https://deyihu.github.io/maptalks.tileclip/demo/maxAvailableZoom-polygon-clip.html)
+* [underground by clip tile](https://deyihu.github.io/maptalks.tileclip/demo/underground.html)
 * [leaflet demo](https://deyihu.github.io/maptalks.tileclip/demo/leaflet.html)
 
 ## Install
