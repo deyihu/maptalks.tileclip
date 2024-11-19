@@ -76,12 +76,16 @@ const tileActor = getTileActor();
   + `options.url`:tile url
   + `options.filter`:[CanvasRenderingContext2D.filter](https://mdn.org.cn/en-US/docs/Web/API/CanvasRenderingContext2D/filter)
   + `options.headers`:fetch headers params. if need
+  + `options.fetchOptions`:fetch options. if need,If it exists, headers will be ignored
 
 ```js
-
 tileActor.getTile({
     url: 'https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/12/1663/3425',
-    headers: {
+    fetchOptions: {
+        referrer: document.location.href,
+        headers: {
+            ...
+        }
         ...
     }
 }).then(imagebitmap => {
@@ -99,9 +103,9 @@ tileActor.getTile({
   + `options.urlTemplate`:tile urlTemplate.https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}
   + `options.filter`:[CanvasRenderingContext2D.filter](https://mdn.org.cn/en-US/docs/Web/API/CanvasRenderingContext2D/filter)
   + `options.headers`:fetch headers params. if need
+  + `options.fetchOptions`:fetch options. if need,If it exists, headers will be ignored
 
 ```js
-
 const {
     x,
     y,
@@ -116,7 +120,11 @@ tileActor.getTileWithMaxZoom({
     z,
     urlTemplate,
     maxAvailableZoom,
-    headers: {
+    fetchOptions: {
+        referrer: document.location.href,
+        headers: {
+            ...
+        }
         ...
     }
 }).then(imagebitmap => {
@@ -132,8 +140,6 @@ tileActor.getTileWithMaxZoom({
   + `Polygon/MultiPolygon` GeoJSON Polygon/MultiPolygon [GeoJSON SPEC](https://datatracker.ietf.org/doc/html/rfc7946#section-3.1.6)
 
 ```js
-
-
 const maskId = 'china';
 
 const polygon = {
@@ -156,8 +162,6 @@ tileActor.injectMask(maskId, polygon).then(data => {
   + `maskId`: mask id
 
 ```js
-
-
 const maskId = 'china';
 
 tileActor.removeMask(maskId).then(data => {
@@ -172,7 +176,6 @@ tileActor.removeMask(maskId).then(data => {
   + `maskId`: mask id
 
 ```js
-
 const maskId = 'china';
 const result = tileActor.maskHasInjected(maskId);
 ```
