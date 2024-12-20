@@ -2,12 +2,11 @@
 
 [maptalks](https://github.com/maptalks/maptalks.js) TileLayer clip tool
 
-* This plugin requires the runtime environment to support [OffscreenCanvas](https://developer.mozilla.org/zh-CN/docs/Web/API/OffscreenCanvas)
-    
+* This plugin requires the runtime environment to support [OffscreenCanvas](https://developer.mozilla.org/zh-CN/docs/Web/API/OffscreenCanvas). Pay attention to relevant compatibility
 
-* Considering performance, all operations are completed within the web worker
+* Considering performance, all operations are completed within the [web worker](https://developer.mozilla.org/zh-CN/docs/Web/API/Web_Workers_API/Using_web_workers)
 
-* If you are familiar with other map engines, you can also apply them to other map engines  [leaflet demo](https://deyihu.github.io/maptalks.tileclip/demo/leaflet.html)
+* If you are familiar with other map engines, you can also apply them to other map engines  [leaflet demo](https://maptalks.github.io/maptalks.tileclip/demo/leaflet.html)
 
 ## Examples
 
@@ -61,7 +60,7 @@ const tileActor = getTileActor();
 
 ### `TileActor` class
 
-Tile clip worker interaction class. about [maptalks. Actor](https://github.com/maptalks/maptalks.js/blob/master/src/core/worker/Actor.ts) details
+Tile clip worker interaction class. about [maptalks. Actor](https://github.com/maptalks/maptalks.js/blob/master/packages/map/src/core/worker/Actor.ts) details
 
 ```js
 import {
@@ -77,7 +76,7 @@ const tileActor = getTileActor();
   + `options.url`:tile url
   + `options.filter`:[CanvasRenderingContext2D.filter](https://mdn.org.cn/en-US/docs/Web/API/CanvasRenderingContext2D/filter)
   + `options.headers`:fetch headers params. if need
-  + `options.fetchOptions`:fetch options. if need,If it exists, headers will be ignored
+  + `options.fetchOptions`:fetch options. if need, If it exists, headers will be ignored
 
 ```js
 tileActor.getTile({
@@ -104,7 +103,7 @@ tileActor.getTile({
   + `options.urlTemplate`:tile urlTemplate.https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}
   + `options.filter`:[CanvasRenderingContext2D.filter](https://mdn.org.cn/en-US/docs/Web/API/CanvasRenderingContext2D/filter)
   + `options.headers`:fetch headers params. if need
-  + `options.fetchOptions`:fetch options. if need,If it exists, headers will be ignored
+  + `options.fetchOptions`:fetch options. if need, If it exists, headers will be ignored
 
 ```js
 const {
@@ -187,7 +186,8 @@ const result = tileActor.maskHasInjected(maskId);
   + `options.projection`: Projection code, such as : EPSG:3857
   + `options.tileSize`:tile size 
   + `options.maskId`:mask key
-  + `options.returnBlobURL`: Do you want to return [Blob URL by createObjectURL() ](https://developer.mozilla.org/zh-CN/docs/Web/API/URL/createObjectURL_static)? When the blob URL is no longer in use, be sure to destroy its value [revokeObjectURL()](https://developer.mozilla.org/zh-CN/docs/Web/API/URL/revokeObjectURL_static)
+  + `options.returnBlobURL`: to return 
+  [Blob URL by createObjectURL() ](https://developer.mozilla.org/zh-CN/docs/Web/API/URL/createObjectURL_static)? **When the blob URL is no longer in use, be sure to destroy its value** [revokeObjectURL()](https://developer.mozilla.org/zh-CN/docs/Web/API/URL/revokeObjectURL_static)
 
 ```js
 import * as maptalks from 'maptalks-gl';
